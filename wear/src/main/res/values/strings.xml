@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">SensorCollector</string>
-    <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World!</string>
+
+    <string name="state_connecting">Connecting...</string>
+    <string name="state_0">Idle</string>
+    <string name="state_1">Collecting Sensor Data</string>
+    <string name="state_2">Waiting to collect Sensor Data</string>
+
+    <string name="btn_state_connecting">Start</string>
+    <string name="btn_state_0">Start</string>
+    <string name="btn_state_1">Stop</string>
+    <string name="btn_state_2">Stop</string>
 </resources>

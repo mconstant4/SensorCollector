@@ -64,6 +64,33 @@ public class MainActivity extends AppCompatActivity implements MessageApi.Messag
         });
     }
 
+    /**
+     * requestState method sends a message requesting the current state of DataCollectionService.
+     * Usually, this is used when GoogleApiClient has connected to Google Play Services.
+     */
+    private void requestState() {
+
+    }
+
+    /**
+     * updateState method updates the state locally on this component. Usually, this called
+     * when the component receives a message with path PATH_NOTIFY_STATE.
+     * @param state Integer to change the current state (mState) to.
+     */
+    private void updateState(int state) {
+
+    }
+
+    /**
+     * updateStateAndNotify method calls updateState and then sends a message notifying
+     * DataCollectionService of state change. This method is usually called when the user toggles
+     * the state using the toggle state button.
+     * @param state
+     */
+    private void updateStateAndNotify(int state) {
+
+    }
+
     /*
     MessageApi.MessageListener Callback methods
      */
