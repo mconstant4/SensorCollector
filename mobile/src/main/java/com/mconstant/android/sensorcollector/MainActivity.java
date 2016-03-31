@@ -110,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements MessageApi.Messag
     protected void onPause() {
         super.onPause();
 
+        Wearable.MessageApi.removeListener(mGoogleApiClient, this);
+        Wearable.DataApi.removeListener(mGoogleApiClient, this);
+
         mGoogleApiClient.unregisterConnectionCallbacks(this);
         mGoogleApiClient.unregisterConnectionFailedListener(this);
         mGoogleApiClient.disconnect();
@@ -259,6 +262,8 @@ public class MainActivity extends AppCompatActivity implements MessageApi.Messag
      */
     @Override
     public void onConnected(Bundle connectionHint) {
+        Wearable.DataApi.addListener(mGoogleApiClient, this);
+        Wearable.MessageApi.addListener(mGoogleApiClient, this);
         sendMessage(PATH_START_SERVICE);
         sendMessage(PATH_REQUEST_STATE);
     }

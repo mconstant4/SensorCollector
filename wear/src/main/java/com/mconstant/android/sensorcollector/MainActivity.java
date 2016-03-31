@@ -112,6 +112,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     protected void onPause() {
         super.onPause();
 
+        Wearable.MessageApi.removeListener(mGoogleApiClient, this);
+
         mGoogleApiClient.unregisterConnectionCallbacks(this);
         mGoogleApiClient.unregisterConnectionFailedListener(this);
         mGoogleApiClient.disconnect();
@@ -247,6 +249,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
      */
     @Override
     public void onConnected(Bundle connectionHint) {
+        Wearable.MessageApi.addListener(mGoogleApiClient, this);
         sendMessage(PATH_REQUEST_STATE);
     }
 
