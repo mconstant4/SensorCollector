@@ -3,6 +3,7 @@ package com.mconstant.android.sensorcollector;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -118,6 +119,7 @@ public class DataCollectionService extends Service implements MessageApi.Message
                 return null;
         }
     }
+
 
     /**
      * notifyState method is called when this service wants to notify all nodes of a state change.

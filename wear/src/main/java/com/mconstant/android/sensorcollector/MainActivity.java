@@ -1,7 +1,12 @@
 package com.mconstant.android.sensorcollector;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
@@ -53,6 +58,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
      * send messages and DataItems.
      */
     private GoogleApiClient mGoogleApiClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +124,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         mGoogleApiClient.unregisterConnectionFailedListener(this);
         mGoogleApiClient.disconnect();
     }
+
 
     /**
      * requestState method sends a message requesting the current state of DataCollectionService.
@@ -204,6 +211,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 public void run() {
                     NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
                     for(Node node : nodes.getNodes()) {
+                        Log.d(DEBUG_LOG_KEY, "Found node " + node.getDisplayName());
                         MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path, path.getBytes()).await();
                         if(result.getStatus().isSuccess()){
                             Log.d(DEBUG_LOG_KEY, "Message sent to: " + node.getDisplayName());
