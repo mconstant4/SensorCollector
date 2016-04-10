@@ -10,4 +10,5 @@
     <string name="btn_state_0">Start</string>
     <string name="btn_state_1">Stop</string>
     <string name="btn_state_2">Stop</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
