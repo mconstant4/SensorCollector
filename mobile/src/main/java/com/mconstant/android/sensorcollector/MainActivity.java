@@ -1,7 +1,12 @@
 package com.mconstant.android.sensorcollector;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,9 +27,43 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
+/**
+ * The Mobile Main Activity of SensorCollector allows the user to start and stop the data collection
+ * process. It also receives the sensor data during the data collection process and saves it to
+ * a text file in the device's External Storage.
+ */
+
 public class MainActivity extends AppCompatActivity implements DataApi.DataListener, MessageApi.MessageListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+    /**
+     * This is a unique tag used by this activity every time it sends a message to the debugger.
+     */
     private static final String DEBUG_LOG_KEY = "mobile_main_activity";
 
+    /**
+     * These integers represent the different states that this activity can be in. It is initially
+     * set to STATE_CONNECTING until its GoogleApiClient has connected to Google Play Services.
+     * Once it is connected, its state is always the same as DataCollectionService's state.
+     *
+     * STATE_CONNECTING:    Whenever the GoogleApiClient is not connected to Google Play Services
+     * (and therefore not able to communicate with DataCollectionService), the Activity is in
+     * this state. The Toggle State button is disabled in this state.
+     * STATE_IDLE:          In this state, DataCollection service is not doing anything. The Toggle
+     * State button in this Activity allows the User to begin the data collection process.
+     * STATE_COLLECTING:    In this state, DataCollection service is collecting data from its sensors
+     * and sending it to this activity where it is saved into a text file in the device's External
+     * Storage. The Toggle State button allows the user to stop the data collection process.
+     * STATE_WAITING:       In this state, DataCollection service is waiting the predefined amount
+     * of time in between periods of data collection. The Toggle State button allows the user to
+     * stop the data collection process.
+     */
     private static final int STATE_CONNECTING = -1;
     private static final int STATE_IDLE = 0;
     private static final int STATE_COLLECTING = 1;
@@ -45,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements DataApi.DataListe
     private static final String ACCELEROMETER_X_KEY = "x_acceleration";
     private static final String ACCELEROMETER_Y_KEY = "y_acceleration";
     private static final String ACCELEROMETER_Z_KEY = "z_acceleration";
+
+    private static final String filename = "data.txt";
 
     private TextView mCurrentStateTextview;
     private Button mToggleStateBtn;
@@ -148,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements DataApi.DataListe
                 mCurrentStateTextview.setText(R.string.state_0);
                 mToggleStateBtn.setText(R.string.btn_state_0);
                 mToggleStateBtn.setEnabled(true);
+                readDataFile();
 
                 break;
 
@@ -213,9 +255,60 @@ public class MainActivity extends AppCompatActivity implements DataApi.DataListe
                     float yAcceleration = dataMap.getFloat(ACCELEROMETER_Y_KEY);
                     float zAcceleration = dataMap.getFloat(ACCELEROMETER_Z_KEY);
                     long timestamp = dataMap.getLong(TIMESTAMP_KEY);
+                    String data = "Time: " + timestamp + "X: " + xAcceleration + ", Y: " + yAcceleration + ", Z: " + zAcceleration + "\n";
                     Log.d(DEBUG_LOG_KEY, "X: " + xAcceleration + ", Y: " + yAcceleration + ", Z: " + zAcceleration);
+
+                    writeToFile(data);
                 }
             }
         }
+    }
+
+    private void writeToFile(String data) {
+        File file = new File(getFilesDir(), filename);
+
+        Log.d(DEBUG_LOG_KEY, file.getAbsolutePath());
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = openFileOutput(filename, Context.MODE_APPEND);
+            outputStream.write(data.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Log.d(DEBUG_LOG_KEY, "File Exists: " + file.exists());
+    }
+
+    private void readDataFile() {
+        File file = new File(getFilesDir(), filename);
+
+        StringBuilder text = new StringBuilder();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
+            }
+            br.close();
+        }
+        catch (IOException e) {
+
+        }
+
+        Log.d(DEBUG_LOG_KEY, text.toString());
     }
 }

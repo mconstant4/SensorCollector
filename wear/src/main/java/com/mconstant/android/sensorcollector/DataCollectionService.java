@@ -50,6 +50,7 @@ public class DataCollectionService extends Service implements SensorEventListene
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
 
+
     private GoogleApiClient mGoogleApiClient;
     private int mState;
     private CountDownTimer mCollectionTimer = new CountDownTimer(2000, 1000) {
